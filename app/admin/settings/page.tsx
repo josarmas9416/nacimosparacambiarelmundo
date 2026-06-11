@@ -38,10 +38,12 @@ function Section({
 export default function SettingsPage() {
   const { token } = useAdmin();
 
-  const [price, setPrice] = useState("49.99");
-  const [stock, setStock] = useState<SizeQuantities>({
+  const [price,       setPrice]       = useState("49.99");
+  const [stock,       setStock]       = useState<SizeQuantities>({
     S: 100, M: 100, L: 100, XL: 100, "2XL": 100,
   });
+  const [storeActive, setStoreActive] = useState(true);
+  const [storeNotice, setStoreNotice] = useState("");
   const [loading,  setLoading]  = useState(true);
   const [saving,   setSaving]   = useState(false);
   const [saved,    setSaved]    = useState(false);
@@ -56,6 +58,8 @@ export default function SettingsPage() {
       .then((data) => {
         setPrice((data.tshirt_price / 100).toFixed(2));
         setStock(data.stock);
+        setStoreActive(data.store_active ?? true);
+        setStoreNotice(data.store_notice ?? "");
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -87,6 +91,8 @@ export default function SettingsPage() {
       body: JSON.stringify({
         tshirt_price: Math.round(parsed * 100),
         stock,
+        store_active: storeActive,
+        store_notice: storeNotice,
       }),
     });
 
@@ -202,6 +208,56 @@ export default function SettingsPage() {
           >
             Poner todo en 0
           </button>
+        </div>
+      </Section>
+
+      {/* ── Store toggle + notice ── */}
+      <Section
+        title="Estado de la Tienda"
+        description="Controla si los clientes pueden realizar pedidos y el mensaje que verán."
+      >
+        {/* Toggle */}
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <p className="text-white text-sm font-semibold">
+              Formulario de pedidos
+            </p>
+            <p className="text-zinc-500 text-xs mt-0.5">
+              {storeActive
+                ? "Los clientes pueden hacer pedidos ahora mismo."
+                : "El formulario está desactivado. Los clientes ven el aviso."}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setStoreActive((v) => !v)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+              storeActive ? "bg-[#3444DA]" : "bg-zinc-700"
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                storeActive ? "translate-x-6" : "translate-x-1"
+              }`}
+            />
+          </button>
+        </div>
+
+        {/* Notice message */}
+        <div>
+          <label className={labelCls}>
+            Mensaje de aviso{" "}
+            <span className="text-zinc-600 normal-case tracking-normal">
+              (visible cuando el formulario está desactivado)
+            </span>
+          </label>
+          <textarea
+            rows={3}
+            value={storeNotice}
+            onChange={(e) => setStoreNotice(e.target.value)}
+            placeholder="Ej: Nuevo lote disponible a partir del 20 de junio. ¡Vuelve pronto!"
+            className="bg-[#1a1a1a] border border-[#2a2a2a] text-white px-3 py-2 text-sm outline-none focus:border-[#3444DA] transition-colors w-full resize-none placeholder:text-zinc-700"
+          />
         </div>
       </Section>
 

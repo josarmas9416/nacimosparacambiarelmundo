@@ -5,12 +5,14 @@ import type { SizeQuantities } from '@/types/order';
 const DEFAULTS = {
   tshirt_price: 4999,
   stock: { S: 99, M: 99, L: 99, XL: 99, '2XL': 99 } as SizeQuantities,
+  store_active: true,
+  store_notice: '',
 };
 
 async function getSettings() {
   const { data } = await supabaseAdmin
     .from('settings')
-    .select('tshirt_price, stock')
+    .select('tshirt_price, stock, store_active, store_notice')
     .single();
   return data ?? DEFAULTS;
 }
@@ -31,9 +33,11 @@ export async function PATCH(req: NextRequest) {
   }
 
   try {
-    const { tshirt_price, stock } = await req.json() as {
+    const { tshirt_price, stock, store_active, store_notice } = await req.json() as {
       tshirt_price: number;
       stock: SizeQuantities;
+      store_active: boolean;
+      store_notice: string;
     };
 
     if (!tshirt_price || tshirt_price <= 0) {
@@ -42,7 +46,14 @@ export async function PATCH(req: NextRequest) {
 
     const { error } = await supabaseAdmin
       .from('settings')
-      .upsert({ id: 1, tshirt_price, stock, updated_at: new Date().toISOString() });
+      .upsert({
+        id: 1,
+        tshirt_price,
+        stock,
+        store_active,
+        store_notice,
+        updated_at: new Date().toISOString(),
+      });
 
     if (error) throw error;
 

@@ -23,14 +23,18 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    supabaseBrowser.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
+    supabaseBrowser.auth.getSession()
+      .then(({ data: { session } }) => {
+        if (!session) {
+          router.push("/login");
+          return;
+        }
+        setToken(session.access_token);
+        setLoading(false);
+      })
+      .catch(() => {
         router.push("/login");
-        return;
-      }
-      setToken(session.access_token);
-      setLoading(false);
-    });
+      });
 
     const { data: { subscription } } =
       supabaseBrowser.auth.onAuthStateChange((event, session) => {

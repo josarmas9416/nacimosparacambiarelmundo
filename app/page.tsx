@@ -10,13 +10,15 @@ import type { SizeQuantities } from "@/types/order";
 const DEFAULT_SETTINGS = {
   tshirt_price: 4999,
   stock: { S: 99, M: 99, L: 99, XL: 99, "2XL": 99 } as SizeQuantities,
+  store_active: true,
+  store_notice: "",
 };
 
 async function getSettings() {
   try {
     const { data } = await supabaseAdmin
       .from("settings")
-      .select("tshirt_price, stock")
+      .select("tshirt_price, stock, store_active, store_notice")
       .single();
     return data ?? DEFAULT_SETTINGS;
   } catch {
@@ -243,14 +245,16 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="flex items-center gap-unit-md bg-ecu-yellow/10 border border-ecu-yellow px-unit-md py-unit-md mb-unit-xl">
-            <span className="material-symbols-outlined text-ecu-yellow text-2xl flex-shrink-0">schedule</span>
-            <p className="font-body-md text-body-md text-on-surface font-semibold">
-              Nuevo lote a partir del martes 16 de Junio, no te lo pierdas
-            </p>
-          </div>
-
-          <OrderForm tshirtPrice={settings.tshirt_price} stock={settings.stock} />
+          {settings.store_active ? (
+            <OrderForm tshirtPrice={settings.tshirt_price} stock={settings.stock} />
+          ) : (
+            <div className="flex items-start gap-unit-md bg-ecu-yellow/10 border border-ecu-yellow px-unit-md py-unit-md">
+              <span className="material-symbols-outlined text-ecu-yellow text-2xl flex-shrink-0 mt-0.5">schedule</span>
+              <p className="font-body-md text-body-md text-on-surface font-semibold">
+                {settings.store_notice || "Los pedidos están temporalmente pausados. Vuelve pronto."}
+              </p>
+            </div>
+          )}
         </section>
 
         {/* ── WhatsApp CTA ── */}
