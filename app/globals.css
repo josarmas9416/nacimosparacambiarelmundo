@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+/* ─── Font variable forwarding (next/font injects these at runtime) ─── */
+@theme inline {
+  --font-inter: var(--font-inter);
+  --font-montserrat: var(--font-montserrat);
+}
+
+/* ─── Design system tokens ─── */
+@theme {
+  /* National colors */
+  --color-ecu-yellow: #FFDD00;
+  --color-ecu-blue:   #0033A0;
+  --color-ecu-red:    #ED1C24;
+
+  /* Material Design surface palette */
+  --color-primary:                     #000000;
+  --color-on-primary:                  #ffffff;
+  --color-primary-container:           #1b1b1b;
+  --color-on-primary-container:        #848484;
+  --color-primary-fixed:               #e2e2e2;
+  --color-primary-fixed-dim:           #c6c6c6;
+  --color-on-primary-fixed:            #1b1b1b;
+  --color-on-primary-fixed-variant:    #474747;
+  --color-inverse-primary:             #c6c6c6;
+
+  --color-secondary:                   #5d5f5f;
+  --color-on-secondary:                #ffffff;
+  --color-secondary-container:         #dcdddd;
+  --color-on-secondary-container:      #5f6161;
+  --color-secondary-fixed:             #e2e2e2;
+  --color-secondary-fixed-dim:         #c6c6c7;
+  --color-on-secondary-fixed:          #1a1c1c;
+  --color-on-secondary-fixed-variant:  #454747;
+
+  --color-tertiary:                    #000000;
+  --color-on-tertiary:                 #ffffff;
+  --color-tertiary-container:          #1b1c1c;
+  --color-on-tertiary-container:       #848484;
+  --color-tertiary-fixed:              #e3e2e2;
+  --color-tertiary-fixed-dim:          #c7c6c6;
+  --color-on-tertiary-fixed:           #1b1c1c;
+  --color-on-tertiary-fixed-variant:   #464747;
+
+  --color-surface:                     #f9f9f9;
+  --color-surface-dim:                 #dadada;
+  --color-surface-bright:              #f9f9f9;
+  --color-surface-container-lowest:    #ffffff;
+  --color-surface-container-low:       #f3f3f4;
+  --color-surface-container:           #eeeeee;
+  --color-surface-container-high:      #e8e8e8;
+  --color-surface-container-highest:   #e2e2e2;
+  --color-surface-tint:                #5e5e5e;
+  --color-surface-variant:             #e2e2e2;
+  --color-on-surface:                  #1a1c1c;
+  --color-on-surface-variant:          #4c4546;
+  --color-inverse-surface:             #2f3131;
+  --color-inverse-on-surface:          #f0f1f1;
+
+  --color-background:                  #f9f9f9;
+  --color-on-background:               #1a1c1c;
+
+  --color-outline:                     #7e7576;
+  --color-outline-variant:             #cfc4c5;
+
+  --color-error:                       #ba1a1a;
+  --color-on-error:                    #ffffff;
+  --color-error-container:             #ffdad6;
+  --color-on-error-container:          #93000a;
+
+  /* Spacing */
+  --spacing-unit-xs:        4px;
+  --spacing-unit-sm:        8px;
+  --spacing-unit-md:        16px;
+  --spacing-unit-lg:        32px;
+  --spacing-unit-xl:        64px;
+  --spacing-unit-xxl:       128px;
+  --spacing-gutter:         24px;
+  --spacing-margin-mobile:  20px;
+  --spacing-margin-desktop: 64px;
+
+  /* Border radius */
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg:      0.5rem;
+  --radius-xl:      0.75rem;
+  --radius-full:    9999px;
+
+  /* Font families — mapped to next/font CSS vars */
+  --font-body-md:           var(--font-inter);
+  --font-body-lg:           var(--font-inter);
+  --font-label-bold:        var(--font-inter);
+  --font-label-sm:          var(--font-inter);
+  --font-headline-xl:       var(--font-montserrat);
+  --font-headline-lg:       var(--font-montserrat);
+  --font-headline-lg-mobile: var(--font-montserrat);
+}
+
+/* ─── Named typography utilities (size + weight + spacing bundled) ─── */
+@layer utilities {
+  .text-body-md         { font-size: 16px; line-height: 1.6; font-weight: 400; }
+  .text-body-lg         { font-size: 18px; line-height: 1.6; font-weight: 400; }
+  .text-label-bold      { font-size: 14px; line-height: 1;   letter-spacing: 0.1em; font-weight: 600; }
+  .text-label-sm        { font-size: 12px; line-height: 1;   font-weight: 500; }
+  .text-headline-xl     { font-size: 80px; line-height: 1;   letter-spacing: -0.04em; font-weight: 800; }
+  .text-headline-lg     { font-size: 48px; line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; }
+  .text-headline-lg-mobile { font-size: 32px; line-height: 1.2; letter-spacing: -0.02em; font-weight: 700; }
+
+  /* max-w shorthand for container cap */
+  .max-w-container-max { max-width: 1440px; }
+}
+
+/* ─── Component utilities ─── */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+.editorial-line  { border-bottom: 1px solid #000000; }
+.sharp-border    { border: 1px solid #000000; }
+
+.national-accent-bar {
+  background: linear-gradient(to right, #FFDD00 33%, #0033A0 33% 66%, #ED1C24 66%);
+  height: 4px;
+  width: 100%;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
