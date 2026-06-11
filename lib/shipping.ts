@@ -32,8 +32,3 @@ export function calculateShipping(
   const isOriente = ORIENTE_PROVINCES.some((p) => p.toLowerCase() === prov);
   return { cost: isOriente ? 750 : 600, isInternational: false };
 }
-
-/** Server-side only — reads TSHIRT_PRICE env var */
-export function getTshirtPrice(): number {
-  return parseInt(process.env.TSHIRT_PRICE ?? '4999', 10);
-}

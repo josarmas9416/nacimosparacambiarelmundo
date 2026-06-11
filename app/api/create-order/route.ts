@@ -49,9 +49,7 @@ export async function POST(req: NextRequest) {
       .from('settings')
       .select('tshirt_price')
       .single();
-    const tshirtPrice =
-      settingsRow?.tshirt_price ??
-      parseInt(process.env.TSHIRT_PRICE ?? '4999', 10);
+    const tshirtPrice = settingsRow?.tshirt_price ?? 4999;
 
     const subtotal = tshirtPrice * total_units;
     const { cost: shipping_cost, isInternational } = calculateShipping(
