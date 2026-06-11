@@ -192,7 +192,8 @@
                 href="#order">Comprar ahora</a>
             </div>
           </div>
-          <p class="font-label-sm text-label-sm text-white/60 uppercase tracking-widest">✓ Incluido envío dentro del Ecuador</p>
+          <p class="font-label-sm text-label-sm text-white/60 uppercase tracking-widest">✓ Incluido envío dentro del
+            Ecuador</p>
         </div>
       </div>
     </section>
@@ -423,7 +424,8 @@
         <!-- Row 3: Tallas + Cantidades -->
         <div class="flex flex-col gap-2">
           <div class="flex items-center justify-between">
-            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Tallas y Cantidades</label>
+            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Tallas y
+              Cantidades</label>
             <a class="text-[10px] font-label-bold uppercase text-secondary underline underline-offset-2 pointer-events-none"
               href="#size-guide">Ver guía de tallas</a>
           </div>
@@ -431,43 +433,55 @@
             <div class="flex gap-2 flex-1">
               <div class="flex flex-col items-center gap-1" title="Talla S">
                 <span class="font-label-bold text-[10px] uppercase text-on-surface-variant">S</span>
-                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0" type="number" value="0" readonly tabindex="-1" />
+                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0"
+                  type="number" value="0" readonly tabindex="-1" />
               </div>
               <div class="flex flex-col items-center gap-1" title="Talla M">
                 <span class="font-label-bold text-[10px] uppercase text-on-surface-variant">M</span>
-                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0" type="number" value="0" readonly tabindex="-1" />
+                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0"
+                  type="number" value="0" readonly tabindex="-1" />
               </div>
               <div class="flex flex-col items-center gap-1" title="Talla L">
                 <span class="font-label-bold text-[10px] uppercase text-on-surface-variant">L</span>
-                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0" type="number" value="0" readonly tabindex="-1" />
+                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0"
+                  type="number" value="0" readonly tabindex="-1" />
               </div>
               <div class="flex flex-col items-center gap-1" title="Talla XL">
                 <span class="font-label-bold text-[10px] uppercase text-on-surface-variant">XL</span>
-                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0" type="number" value="0" readonly tabindex="-1" />
+                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0"
+                  type="number" value="0" readonly tabindex="-1" />
               </div>
               <div class="flex flex-col items-center gap-1" title="Talla 2XL">
                 <span class="font-label-bold text-[10px] uppercase text-on-surface-variant">2XL</span>
-                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0" type="number" value="0" readonly tabindex="-1" />
+                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0"
+                  type="number" value="0" readonly tabindex="-1" />
               </div>
             </div>
             <div class="flex flex-col items-center gap-1 border-l border-primary/10 pl-3 shrink-0">
               <span class="font-label-bold text-[10px] uppercase text-ecu-blue">Total</span>
-              <span class="font-label-bold text-[14px] text-ecu-blue tabular-nums leading-[1.4] pb-1" id="qty-total">0</span>
+              <span class="font-label-bold text-[14px] text-ecu-blue tabular-nums leading-[1.4] pb-1"
+                id="qty-total">0</span>
             </div>
           </div>
         </div>
-        <!-- Row 4: Provincia + Ciudad -->
+        <!-- Row 4: País + Provincia -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-unit-lg">
           <div class="flex flex-col gap-1">
-            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Provincia</label>
+            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">País</label>
+            <input class="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50"
+              placeholder="Ej: Ecuador" type="text" readonly tabindex="-1" />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Provincia / Estado</label>
             <input class="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50"
               placeholder="Ej: Pichincha" type="text" readonly tabindex="-1" />
           </div>
-          <div class="flex flex-col gap-1">
-            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Ciudad</label>
-            <input class="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50"
-              placeholder="Ej: Quito" type="text" readonly tabindex="-1" />
-          </div>
+        </div>
+        <!-- Row 5: Ciudad -->
+        <div class="flex flex-col gap-1">
+          <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Ciudad</label>
+          <input class="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50"
+            placeholder="Ej: Quito" type="text" readonly tabindex="-1" />
         </div>
         <div class="flex flex-col gap-1">
           <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Dirección Exacta</label>
@@ -482,7 +496,7 @@
         </div>
         <button
           class="w-full bg-black text-white py-6 font-label-bold text-label-bold uppercase tracking-widest hover:bg-ecu-blue transition-colors mt-unit-lg active:scale-[0.98] duration-150 shadow-lg"
-          type="submit">Hacer pedido • $50.00</button>
+          type="submit">Hacer pedido • $49.99</button>
       </form>
     </section>
     <section class="border-t border-primary/10 py-unit-xl px-margin-mobile text-center bg-white">
@@ -512,9 +526,9 @@
   <script>
     // Size qty counter
     const qtyInputs = document.querySelectorAll('[title^="Talla"] input');
-    const qtyTotal  = document.getElementById('qty-total');
+    const qtyTotal = document.getElementById('qty-total');
     const submitBtn = document.querySelector('form button[type="submit"]');
-    const PRICE     = 50;
+    const PRICE = 50;
 
     function updateTotal() {
       let total = 0;
