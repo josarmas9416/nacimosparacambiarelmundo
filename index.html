@@ -185,14 +185,14 @@
             Camiseta<br />Ecuador 2026</h1>
           <p class="font-body-lg text-body-lg mb-unit-lg text-white/90">Lleva los colores de tu orgullo. Stock exclusivo
             para coleccionistas.</p>
-          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-unit-md">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-unit-md mb-unit-sm">
             <p class="font-headline-lg text-headline-lg text-ecu-yellow">$49.99</p>
-            <p class="font-body-lg text-body-lg mb-unit-lg text-white/90">Incluido envío dentro del Ecuador</p>
             <div class="flex gap-unit-md w-full sm:w-auto">
               <a class="bg-white text-black px-unit-xl py-4 font-label-bold text-label-bold uppercase text-center flex-1 sm:flex-none hover:bg-ecu-blue hover:text-white transition-all duration-300 shadow-xl"
                 href="#order">Comprar ahora</a>
             </div>
           </div>
+          <p class="font-label-sm text-label-sm text-white/60 uppercase tracking-widest">✓ Incluido envío dentro del Ecuador</p>
         </div>
       </div>
     </section>
@@ -214,8 +214,9 @@
               <span class="material-symbols-outlined text-ecu-blue mt-1">check_circle</span>
               <div>
                 <p class="font-label-bold text-label-bold uppercase">Tejido Premium</p>
-                <p class="font-body-md text-body-md text-secondary">Tela poliester y textura de tela, acabado suave al tacto y
-                  durable</p>
+                <p class="font-body-md text-body-md text-secondary">Tela poliester y textura de tela, acabado suave al
+                  tacto y
+                  durable.</p>
               </div>
             </li>
             <li class="flex items-start gap-unit-md py-unit-sm border-b border-primary/10">
@@ -393,6 +394,7 @@
       </div>
 
       <form class="space-y-unit-lg opacity-50 pointer-events-none select-none">
+        <!-- Row 1: Nombre + Cédula -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-unit-lg">
           <div class="flex flex-col gap-1">
             <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Nombre Completo</label>
@@ -400,34 +402,72 @@
               placeholder="Ej: Juan Pérez" type="text" readonly tabindex="-1" />
           </div>
           <div class="flex flex-col gap-1">
+            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Cédula</label>
+            <input class="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50"
+              placeholder="Ej: 1712345678" type="text" readonly tabindex="-1" />
+          </div>
+        </div>
+        <!-- Row 2: WhatsApp + Correo -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-unit-lg">
+          <div class="flex flex-col gap-1">
             <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">WhatsApp</label>
             <input class="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50"
               placeholder="+593 ..." type="tel" readonly tabindex="-1" />
           </div>
+          <div class="flex flex-col gap-1">
+            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Correo</label>
+            <input class="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50"
+              placeholder="Ej: juan@correo.com" type="email" readonly tabindex="-1" />
+          </div>
         </div>
+        <!-- Row 3: Tallas + Cantidades -->
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Tallas y Cantidades</label>
+            <a class="text-[10px] font-label-bold uppercase text-secondary underline underline-offset-2 pointer-events-none"
+              href="#size-guide">Ver guía de tallas</a>
+          </div>
+          <div class="flex items-start gap-3 mt-1">
+            <div class="flex gap-2 flex-1">
+              <div class="flex flex-col items-center gap-1" title="Talla S">
+                <span class="font-label-bold text-[10px] uppercase text-on-surface-variant">S</span>
+                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0" type="number" value="0" readonly tabindex="-1" />
+              </div>
+              <div class="flex flex-col items-center gap-1" title="Talla M">
+                <span class="font-label-bold text-[10px] uppercase text-on-surface-variant">M</span>
+                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0" type="number" value="0" readonly tabindex="-1" />
+              </div>
+              <div class="flex flex-col items-center gap-1" title="Talla L">
+                <span class="font-label-bold text-[10px] uppercase text-on-surface-variant">L</span>
+                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0" type="number" value="0" readonly tabindex="-1" />
+              </div>
+              <div class="flex flex-col items-center gap-1" title="Talla XL">
+                <span class="font-label-bold text-[10px] uppercase text-on-surface-variant">XL</span>
+                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0" type="number" value="0" readonly tabindex="-1" />
+              </div>
+              <div class="flex flex-col items-center gap-1" title="Talla 2XL">
+                <span class="font-label-bold text-[10px] uppercase text-on-surface-variant">2XL</span>
+                <input class="w-full bg-transparent border-b border-primary p-1 text-center tabular-nums" min="0" type="number" value="0" readonly tabindex="-1" />
+              </div>
+            </div>
+            <div class="flex flex-col items-center gap-1 border-l border-primary/10 pl-3 shrink-0">
+              <span class="font-label-bold text-[10px] uppercase text-ecu-blue">Total</span>
+              <span class="font-label-bold text-[14px] text-ecu-blue tabular-nums leading-[1.4] pb-1" id="qty-total">0</span>
+            </div>
+          </div>
+        </div>
+        <!-- Row 4: Provincia + Ciudad -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-unit-lg">
           <div class="flex flex-col gap-1">
-            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Talla</label>
-            <a class="text-[10px] font-label-bold uppercase text-secondary underline underline-offset-2 mt-1 pointer-events-none"
-              href="#size-guide">Ver guía de tallas</a>
-            <select class="w-full bg-transparent border-b border-primary p-2 appearance-none cursor-not-allowed"
-              disabled>
-              <option>S</option>
-              <option>M</option>
-              <option>L</option>
-              <option>XL</option>
-            </select>
+            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Provincia</label>
+            <input class="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50"
+              placeholder="Ej: Pichincha" type="text" readonly tabindex="-1" />
           </div>
           <div class="flex flex-col gap-1">
-            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Cantidad</label>
-            <input class="w-full bg-transparent border-b border-primary p-2" min="1" type="number" value="1" readonly
-              tabindex="-1" />
+            <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Ciudad</label>
+            <input class="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50"
+              placeholder="Ej: Quito" type="text" readonly tabindex="-1" />
           </div>
-        </div>
-        <div class="flex flex-col gap-1">
-          <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Ciudad</label>
-          <input class="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50"
-            placeholder="Ej: Quito" type="text" readonly tabindex="-1" />
         </div>
         <div class="flex flex-col gap-1">
           <label class="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">Dirección Exacta</label>
@@ -458,21 +498,35 @@
     <div
       class="flex flex-col md:flex-row justify-between items-start md:items-center w-full px-margin-mobile md:px-margin-desktop py-unit-xl max-w-container-max mx-auto gap-unit-md">
       <div class="flex flex-col gap-unit-xs">
-        <span class="font-label-bold text-label-bold text-primary uppercase">ECUADOR <span
+        <span class="font-label-bold text-label-bold text-primary uppercase">Nacimos para cambiar el mundo <span
             class="text-ecu-blue">2026</span></span>
-        <p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 ECUADOR LIMITED. ALL RIGHTS RESERVED.</p>
+        <p class="font-label-sm text-label-sm text-on-surface-variant">© 2026 ALL RIGHTS RESERVED.</p>
       </div>
       <nav class="flex flex-wrap gap-unit-md">
-        <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-ecu-blue transition-colors uppercase"
-          href="#">WHATSAPP</a>
+        <!-- <a class="font-label-sm text-label-sm text-on-surface-variant hover:text-ecu-blue transition-colors uppercase"
+          href="#">WHATSAPP</a> -->
       </nav>
     </div>
     <div class="national-accent-bar opacity-50"></div>
   </footer>
   <script>
+    // Size qty counter
+    const qtyInputs = document.querySelectorAll('[title^="Talla"] input');
+    const qtyTotal  = document.getElementById('qty-total');
+    const submitBtn = document.querySelector('form button[type="submit"]');
+    const PRICE     = 50;
+
+    function updateTotal() {
+      let total = 0;
+      qtyInputs.forEach(i => total += Math.max(0, parseInt(i.value) || 0));
+      qtyTotal.textContent = total;
+      if (submitBtn) submitBtn.textContent = `Hacer pedido • $${(total * PRICE).toFixed(2)}`;
+    }
+    qtyInputs.forEach(i => i.addEventListener('input', updateTotal));
+
     document.querySelector('form').addEventListener('submit', (e) => {
       e.preventDefault();
-      alert('Procesando pedido de $50.00... Serás redirigido a WhatsApp para confirmar el pago.');
+      alert('Procesando pedido... Serás redirigido a WhatsApp para confirmar el pago.');
     });
 
     // Carousel
