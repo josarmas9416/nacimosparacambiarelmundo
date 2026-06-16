@@ -6,7 +6,6 @@ import type { Order } from "@/types/order";
 import SummaryBar, { computeStats, type SummaryStats } from "./components/SummaryBar";
 import Filters, { type FilterValues } from "./components/Filters";
 import OrdersTable from "./components/OrdersTable";
-import PaymentLinkModal from "./components/PaymentLinkModal";
 
 export default function AdminPage() {
   const { token } = useAdmin();
@@ -15,7 +14,6 @@ export default function AdminPage() {
   const [stats,         setStats]         = useState<SummaryStats | null>(null);
   const [loading,       setLoading]       = useState(true);
   const [filterLoading, setFilterLoading] = useState(false);
-  const [paymentModal,  setPaymentModal]  = useState<string | null>(null);
 
   const fetchOrders = useCallback(
     async (params?: Partial<FilterValues>) => {
@@ -37,7 +35,6 @@ export default function AdminPage() {
     [token]
   );
 
-  // Initial load: all orders → compute summary
   useEffect(() => {
     if (!token) return;
     fetchOrders().then((data) => {
@@ -62,7 +59,7 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
+      <div className="flex items-center justify-center min-h-100">
         <p className="text-zinc-500 text-[11px] uppercase tracking-widest animate-pulse">
           Cargando pedidos...
         </p>
@@ -72,12 +69,9 @@ export default function AdminPage() {
 
   return (
     <div className="p-6">
-      {/* Page header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-white text-xl font-bold uppercase tracking-widest">
-            Pedidos
-          </h1>
+          <h1 className="text-white text-xl font-bold uppercase tracking-widest">Pedidos</h1>
           <p className="text-zinc-500 text-sm mt-0.5">
             {orders.length} resultado{orders.length !== 1 ? "s" : ""}
           </p>
@@ -91,28 +85,9 @@ export default function AdminPage() {
         </button>
       </div>
 
-      {/* Summary */}
       {stats && <SummaryBar stats={stats} />}
-
-      {/* Filters */}
       <Filters onApply={handleApplyFilters} loading={filterLoading} />
-
-      {/* Table */}
-      <OrdersTable
-        orders={orders}
-        token={token}
-        onRefresh={handleRefresh}
-        onGeneratePaymentLink={(id) => setPaymentModal(id)}
-      />
-
-      {/* Payment link modal */}
-      {paymentModal && (
-        <PaymentLinkModal
-          orderId={paymentModal}
-          token={token}
-          onClose={() => setPaymentModal(null)}
-        />
-      )}
+      <OrdersTable orders={orders} token={token} onRefresh={handleRefresh} />
     </div>
   );
 }

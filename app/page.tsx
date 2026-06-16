@@ -27,18 +27,18 @@ async function getSettings() {
 }
 
 const SIZE_TABLE = [
-  { label: "TALLA S",   pecho: "50 cm", alto: "70 cm" },
-  { label: "TALLA M",   pecho: "52 cm", alto: "72 cm" },
-  { label: "TALLA L",   pecho: "54 cm", alto: "74 cm" },
-  { label: "TALLA XL",  pecho: "56 cm", alto: "75 cm" },
+  { label: "TALLA S", pecho: "50 cm", alto: "70 cm" },
+  { label: "TALLA M", pecho: "52 cm", alto: "72 cm" },
+  { label: "TALLA L", pecho: "54 cm", alto: "74 cm" },
+  { label: "TALLA XL", pecho: "56 cm", alto: "75 cm" },
   { label: "TALLA 2XL", pecho: "58 cm", alto: "76 cm" },
 ];
 
 const HOW_IT_WORKS = [
-  { num: "01", color: "text-ecu-yellow/30", title: "Elige",       body: "Selecciona tu talla y cantidad ideal." },
-  { num: "02", color: "text-ecu-blue/30",   title: "Completa",    body: "Ingresa tus datos de envío en el formulario." },
-  { num: "03", color: "text-ecu-red/30",    title: "Paga",        body: "Realiza tu pago de forma segura y rápida." },
-  { num: "04", color: "text-primary/10",    title: "Confirmamos", body: "Recibe confirmación vía WhatsApp." },
+  { num: "01", color: "text-ecu-yellow/30", title: "Elige", body: "Selecciona tu talla y cantidad ideal." },
+  { num: "02", color: "text-ecu-blue/30", title: "Completa", body: "Ingresa tus datos de envío en el formulario." },
+  { num: "03", color: "text-ecu-red/30", title: "Paga", body: "Realiza tu pago de forma segura y rápida." },
+  { num: "04", color: "text-primary/10", title: "Confirmamos", body: "Recibe confirmación vía WhatsApp." },
 ];
 
 export default async function Home() {
@@ -52,12 +52,11 @@ export default async function Home() {
         <section className="relative min-h-screen w-full flex items-end pb-16" id="hero">
           <div className="absolute inset-0 z-0 overflow-hidden">
             <Image
-              src="https://ajzbtmnyihqynsreailk.supabase.co/storage/v1/object/public/img/a1.jpeg"
+              src="/img/a1.jpeg"
               alt="Camiseta Ecuador 2026"
               fill
               className="object-cover object-center"
               priority
-              unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           </div>
@@ -200,12 +199,11 @@ export default async function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-unit-xl items-center">
             <div className="bg-white p-unit-md shadow-xl border border-primary/5">
               <Image
-                src="https://ajzbtmnyihqynsreailk.supabase.co/storage/v1/object/public/img/camiseta%20web%202-01.jpeg"
+                src="/img/camiseta web 2-01.jpeg"
                 alt="Guía técnica de medidas"
                 width={600}
                 height={600}
                 className="w-full h-auto object-contain"
-                unoptimized
               />
             </div>
 

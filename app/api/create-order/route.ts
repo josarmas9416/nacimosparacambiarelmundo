@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: msg }, { status: 409 });
     }
 
-    const { error: insertError } = await supabaseAdmin
+    const { data: order, error: insertError } = await supabaseAdmin
       .from('orders')
       .insert({
         nombre:    body.nombre,
@@ -88,7 +88,9 @@ export async function POST(req: NextRequest) {
         shipping_cost,
         total,
         is_international: isInternational,
-      });
+      })
+      .select('id')
+      .single();
 
     if (insertError) throw insertError;
 
@@ -96,15 +98,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ international: true });
     }
 
-    // ── TODO: Enable Payphone when ready ──────────────────────────────────
-    // import { createPayphoneLink } from '@/lib/payphone';
-    // const clientTransactionId = Date.now().toString().slice(-15);
-    // const paymentLink = await createPayphoneLink(total, clientTransactionId);
-    // await supabaseAdmin.from('orders').update({ client_transaction_id: clientTransactionId }).eq('id', order.id);
-    // return NextResponse.json({ paymentLink });
-    // ─────────────────────────────────────────────────────────────────────
-
-    return NextResponse.json({ success: true });
+    // Return order id and total so the frontend can initialize the Cajita widget
+    return NextResponse.json({ orderId: order.id, total });
   } catch (err) {
     console.error('[POST /api/create-order]', err);
     return NextResponse.json(

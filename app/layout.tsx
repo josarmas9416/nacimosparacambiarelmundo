@@ -34,6 +34,10 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
         />
+        <link
+          rel="stylesheet"
+          href="https://cdn.payphonetodoesposible.com/box/v2.0/payphone-payment-box.css"
+        />
       </head>
       <body className="bg-surface text-on-surface font-body-md selection:bg-ecu-blue selection:text-white">
         {children}

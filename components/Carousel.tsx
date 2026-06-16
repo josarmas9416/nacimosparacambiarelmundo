@@ -5,15 +5,15 @@ import Image from "next/image";
 
 const SLIDES = [
   {
-    src: "https://ajzbtmnyihqynsreailk.supabase.co/storage/v1/object/public/img/image_1781135481585_compressed.jpg",
+    src: "/img/image_1781135481585_compressed.jpg",
     alt: "Camiseta Ecuador 2026 – vista 1",
   },
   {
-    src: "https://ajzbtmnyihqynsreailk.supabase.co/storage/v1/object/public/img/image_1781135480568_compressed.jpg",
+    src: "/img/image_1781135480568_compressed.jpg",
     alt: "Camiseta Ecuador 2026 – vista 2",
   },
   {
-    src: "https://ajzbtmnyihqynsreailk.supabase.co/storage/v1/object/public/img/image_1781135479547_compressed.jpg",
+    src: "/img/image_1781135479547_compressed.jpg",
     alt: "Camiseta Ecuador 2026 – vista 3",
   },
 ];
@@ -129,9 +129,8 @@ export default function Carousel() {
             key={i}
             onClick={() => handleDot(i)}
             aria-label={`Foto ${i + 1}`}
-            className={`h-1 transition-all duration-300 ${
-              i === current ? "w-6 bg-primary" : "w-2 bg-primary/20"
-            }`}
+            className={`h-1 transition-all duration-300 ${i === current ? "w-6 bg-primary" : "w-2 bg-primary/20"
+              }`}
           />
         ))}
       </div>

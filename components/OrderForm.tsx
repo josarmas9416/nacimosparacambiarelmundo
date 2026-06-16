@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import Link from "next/link";
 import { calculateShipping } from "@/lib/shipping";
 import type { SizeQuantities } from "@/types/order";
@@ -12,8 +12,6 @@ function centsToDisplay(cents: number) {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
-type SuccessType = "local" | "international";
-
 // ── Country / province data ──────────────────────────────────────────────────
 
 const ECUADOR_PROVINCES = [
@@ -22,6 +20,47 @@ const ECUADOR_PROVINCES = [
   "Los Ríos", "Manabí", "Morona Santiago", "Napo", "Orellana", "Pastaza",
   "Pichincha", "Santa Elena", "Santo Domingo de los Tsáchilas",
   "Sucumbíos", "Tungurahua", "Zamora Chinchipe",
+];
+
+
+const PHONE_CODES = [
+  { label: "Ecuador", code: "+593" },
+  { label: "Argentina", code: "+54" },
+  { label: "Alemania", code: "+49" },
+  { label: "Australia", code: "+61" },
+  { label: "Bélgica", code: "+32" },
+  { label: "Bolivia", code: "+591" },
+  { label: "Brasil", code: "+55" },
+  { label: "Canadá", code: "+1" },
+  { label: "Chile", code: "+56" },
+  { label: "China", code: "+86" },
+  { label: "Colombia", code: "+57" },
+  { label: "Corea del Sur", code: "+82" },
+  { label: "Costa Rica", code: "+506" },
+  { label: "Cuba", code: "+53" },
+  { label: "El Salvador", code: "+503" },
+  { label: "España", code: "+34" },
+  { label: "Estados Unidos", code: "+1" },
+  { label: "Francia", code: "+33" },
+  { label: "Guatemala", code: "+502" },
+  { label: "Haití", code: "+509" },
+  { label: "Honduras", code: "+504" },
+  { label: "Italia", code: "+39" },
+  { label: "Japón", code: "+81" },
+  { label: "México", code: "+52" },
+  { label: "Nicaragua", code: "+505" },
+  { label: "Países Bajos", code: "+31" },
+  { label: "Panamá", code: "+507" },
+  { label: "Paraguay", code: "+595" },
+  { label: "Perú", code: "+51" },
+  { label: "Portugal", code: "+351" },
+  { label: "Puerto Rico", code: "+1787" },
+  { label: "Reino Unido", code: "+44" },
+  { label: "Rep. Dominicana", code: "+1809" },
+  { label: "Rusia", code: "+7" },
+  { label: "Suiza", code: "+41" },
+  { label: "Uruguay", code: "+598" },
+  { label: "Venezuela", code: "+58" },
 ];
 
 const LATAM_COUNTRIES = [
@@ -37,6 +76,64 @@ const OTHER_COUNTRIES = [
   "Portugal", "Reino Unido", "Rusia", "Suiza",
 ];
 
+// ── Cajita de Pagos widget ───────────────────────────────────────────────────
+
+interface PayphoneConfig {
+  orderId: string;
+  total: number;  // centavos
+  whatsapp: string;
+  correo: string;
+  cedula: string;
+}
+
+function buildPhone(code: string, number: string): string {
+  const local = number.startsWith("0") ? number.slice(1) : number;
+  return code + local;
+}
+
+function loadCajita(config: PayphoneConfig) {
+  const SRC = "https://cdn.payphonetodoesposible.com/box/v2.0/payphone-payment-box.js";
+  // Use new Function so webpack doesn't try to bundle the CDN URL
+  const dynamicImport = new Function("url", "return import(url)");
+
+  const initWidget = () => {
+    const Ctor = (window as any).PPaymentButtonBox;
+    if (typeof Ctor !== "function") return false;
+    const payload = {
+      token: process.env.NEXT_PUBLIC_PAYPHONE_TOKEN,
+      clientTransactionId: config.orderId,
+      amount: config.total,
+      amountWithoutTax: config.total,
+      amountWithTax: 0,
+      tax: 0,
+      service: 0,
+      tip: 0,
+      currency: "USD",
+      storeId: process.env.NEXT_PUBLIC_PAYPHONE_STORE_ID ?? "",
+      reference: `Camiseta Ecuador 2026 - ${config.cedula}`,
+      defaultMethod: "card",
+      phoneNumber: config.whatsapp,
+      email: config.correo,
+      documentId: config.cedula,
+      identificationType: /^\d{10}$/.test(config.cedula) ? 1 : 3,
+      responseUrl: `${window.location.origin}/confirmar`,
+    };
+    new Ctor(payload).render("pp-button");
+    return true;
+  };
+
+  // PPaymentButtonBox already on window (script loaded on a previous render)
+  if (initWidget()) return;
+
+  dynamicImport(SRC)
+    .then(() => {
+      if (!initWidget()) {
+        console.error("[Cajita] PPaymentButtonBox not found on window after module load.");
+      }
+    })
+    .catch((err: unknown) => console.error("[Cajita] Failed to load:", err));
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 
 interface Props {
@@ -46,6 +143,8 @@ interface Props {
 
 const DEFAULT_STOCK: SizeQuantities = { S: 99, M: 99, L: 99, XL: 99, "2XL": 99 };
 
+type Step = "form" | "payment" | "international";
+
 export default function OrderForm({
   tshirtPrice = 4999,
   stock = DEFAULT_STOCK,
@@ -53,20 +152,23 @@ export default function OrderForm({
   const [quantities, setQuantities] = useState<SizeQuantities>({
     S: 0, M: 0, L: 0, XL: 0, "2XL": 0,
   });
+  const [whatsappCode, setWhatsappCode] = useState("+593");
+  const [whatsappCustomCode, setWhatsappCustomCode] = useState("");
   const [fields, setFields] = useState({
-    nombre:    "",
-    cedula:    "",
-    whatsapp:  "",
-    correo:    "",
-    pais:      "Ecuador",
+    nombre: "",
+    cedula: "",
+    whatsapp: "",
+    correo: "",
+    pais: "Ecuador",
     provincia: "",
-    ciudad:    "",
+    ciudad: "",
     direccion: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error,   setError]   = useState<string | null>(null);
-  const [success, setSuccess] = useState<SuccessType | null>(null);
-  const [paymentLink, setPaymentLink] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [step, setStep] = useState<Step>("form");
+  const [paymentConfig, setPaymentConfig] = useState<PayphoneConfig | null>(null);
+  const widgetRef = useRef(false);
 
   const isEcuador = fields.pais === "Ecuador";
   const totalUnits = SIZES.reduce((acc, s) => acc + quantities[s], 0);
@@ -77,7 +179,6 @@ export default function OrderForm({
   );
 
   const subtotalCents = totalUnits * tshirtPrice;
-  const totalCents    = subtotalCents + (shipping.isInternational ? 0 : shipping.cost);
 
   const handleQty = (size: SizeKey, value: string) => {
     const n = Math.min(
@@ -94,21 +195,21 @@ export default function OrderForm({
   const handleCountryChange = (value: string) => {
     setFields((f) => ({
       ...f,
-      pais:      value,
+      pais: value,
       provincia: "",
-      ciudad:    "",
+      ciudad: "",
       direccion: "",
     }));
   };
 
-  const resetForm = () => {
-    setSuccess(null);
-    setPaymentLink(null);
-    setFields({ nombre:"",cedula:"",whatsapp:"",correo:"",pais:"Ecuador",provincia:"",ciudad:"",direccion:"" });
-    setQuantities({ S:0, M:0, L:0, XL:0, "2XL":0 });
-  };
+  // Initialize the Cajita widget once the payment step is reached
+  useEffect(() => {
+    if (step !== "payment" || !paymentConfig || widgetRef.current) return;
+    widgetRef.current = true;
+    loadCajita(paymentConfig);
+  }, [step, paymentConfig]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
 
@@ -122,7 +223,7 @@ export default function OrderForm({
       const res = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...fields, sizes: quantities }),
+        body: JSON.stringify({ ...fields, whatsapp: buildPhone(whatsappCode === "otro" ? whatsappCustomCode : whatsappCode, fields.whatsapp), sizes: quantities }),
       });
 
       const data = await res.json();
@@ -133,20 +234,19 @@ export default function OrderForm({
       }
 
       if (data.international) {
-        setSuccess("international");
+        setStep("international");
         return;
       }
 
-      if (data.paymentLink) {
-        setPaymentLink(data.paymentLink);
-        setSuccess("local");
-        window.open(data.paymentLink, "_blank", "noopener,noreferrer");
-        return;
-      }
-
-      if (data.success) {
-        setSuccess("local");
-      }
+      // Ecuador — orderId + total returned, show Cajita widget
+      setPaymentConfig({
+        orderId: data.orderId,
+        total: data.total,
+        whatsapp: buildPhone(whatsappCode === "otro" ? whatsappCustomCode : whatsappCode, fields.whatsapp),
+        correo: fields.correo,
+        cedula: fields.cedula,
+      });
+      setStep("payment");
     } catch {
       setError("Error de conexión. Inténtalo de nuevo.");
     } finally {
@@ -154,18 +254,35 @@ export default function OrderForm({
     }
   };
 
-  /* ── Success screens ── */
-  if (success === "international") {
+  const resetForm = async (cancelOrder = false) => {
+    if (cancelOrder && paymentConfig?.orderId) {
+      await fetch("/api/cancel-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: paymentConfig.orderId }),
+      }).catch(() => {}); // best-effort; don't block the UI reset
+    }
+    setStep("form");
+    setPaymentConfig(null);
+    widgetRef.current = false;
+    setWhatsappCode("+593");
+    setWhatsappCustomCode("");
+    setFields({ nombre: "", cedula: "", whatsapp: "", correo: "", pais: "Ecuador", provincia: "", ciudad: "", direccion: "" });
+    setQuantities({ S: 0, M: 0, L: 0, XL: 0, "2XL": 0 });
+  };
+
+  /* ── International success ── */
+  if (step === "international") {
     return (
       <div className="bg-ecu-blue/10 border border-ecu-blue p-unit-xl text-center space-y-unit-md">
         <span className="material-symbols-outlined text-ecu-blue text-5xl block">check_circle</span>
         <h3 className="font-headline-lg text-headline-lg-mobile uppercase">¡Pedido recibido!</h3>
         <p className="font-body-lg text-body-lg text-secondary">
-          Te contactaremos por WhatsApp para confirmar el costo de envío y
-          procesar tu pedido.
+          Te contactaremos por WhatsApp para coordinar el pago y el envío
+          internacional.
         </p>
         <button
-          onClick={resetForm}
+          onClick={() => resetForm(false)}
           className="font-label-bold text-label-bold uppercase underline underline-offset-4 text-secondary hover:text-ecu-blue transition-colors"
         >
           Hacer otro pedido
@@ -174,46 +291,34 @@ export default function OrderForm({
     );
   }
 
-  if (success === "local") {
+  /* ── Cajita de Pagos widget ── */
+  if (step === "payment") {
     return (
-      <div className="bg-ecu-blue/10 border border-ecu-blue p-unit-xl text-center space-y-unit-md">
-        <span className="material-symbols-outlined text-ecu-blue text-5xl block">check_circle</span>
-        <h3 className="font-headline-lg text-headline-lg-mobile uppercase">¡Pedido recibido!</h3>
-        {paymentLink ? (
-          <>
-            <p className="font-body-lg text-body-lg text-secondary">
-              Se abrió la página de pago en una nueva ventana.
-            </p>
-            <div className="space-y-unit-sm">
-              <p className="font-label-sm text-label-sm text-secondary uppercase tracking-widest">
-                Si no se abrió automáticamente:
-              </p>
-              <a
-                href={paymentLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-ecu-blue text-white px-unit-xl py-3 font-label-bold text-label-bold uppercase hover:opacity-90 transition-opacity"
-              >
-                Ir a pagar
-              </a>
-            </div>
-          </>
-        ) : (
-          <p className="font-body-lg text-body-lg text-secondary">
-            Tu pedido fue registrado. Te contactaremos pronto para confirmar el pago.
+      <div className="space-y-unit-lg">
+        <div className="bg-ecu-blue/5 border border-ecu-blue/30 p-unit-md">
+          <p className="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue mb-1">
+            Pedido registrado
           </p>
-        )}
+          <p className="font-body-md text-body-md text-secondary text-sm">
+            Completa el pago a continuación. Tienes 5 minutos antes de que
+            la sesión expire.
+          </p>
+        </div>
+
+        {/* Cajita widget mounts here */}
+        <div id="pp-button" className="min-h-75" />
+
         <button
-          onClick={resetForm}
-          className="block font-label-bold text-label-bold uppercase underline underline-offset-4 text-secondary hover:text-ecu-blue transition-colors mx-auto"
+          onClick={() => resetForm(true)}
+          className="text-xs text-secondary underline underline-offset-2 hover:text-ecu-blue transition-colors"
         >
-          Hacer otro pedido
+          Cancelar y volver al formulario
         </button>
       </div>
     );
   }
 
-  /* ── Form ── */
+  /* ── Order form ── */
   return (
     <form onSubmit={handleSubmit} className="space-y-unit-lg">
       {/* Row 1: Nombre + Cédula */}
@@ -242,33 +347,54 @@ export default function OrderForm({
         </div>
       </div>
 
-      {/* Row 2: WhatsApp + Correo */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-unit-lg">
-        <div className="flex flex-col gap-1">
-          <label className="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">
-            WhatsApp *
-          </label>
+      {/* Row 2: WhatsApp (full width) */}
+      <div className="flex flex-col gap-1">
+        <label className="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">
+          WhatsApp *
+        </label>
+        <div className="flex items-center border-b border-primary focus-within:border-ecu-blue transition-colors">
+          <select
+            value={whatsappCode}
+            onChange={(e) => setWhatsappCode(e.target.value)}
+            className="bg-transparent py-2 pr-2 outline-none cursor-pointer text-sm shrink-0"
+          >
+            {PHONE_CODES.map(({ label, code }) => (
+              <option key={label} value={code}>{code} — {label}</option>
+            ))}
+            <option value="otro">Otro país…</option>
+          </select>
+          <span className="text-outline/30 select-none px-1 text-sm">|</span>
+          {whatsappCode === "otro" && (
+            <input
+              type="text" placeholder="+XX"
+              value={whatsappCustomCode}
+              onChange={(e) => setWhatsappCustomCode(e.target.value)}
+              className="w-16 bg-transparent py-2 pr-1 outline-none text-sm text-center placeholder:text-outline/50 shrink-0"
+            />
+          )}
           <input
-            required type="tel" placeholder="+593 ..."
+            required type="tel" placeholder="992665224"
             value={fields.whatsapp}
             onChange={(e) => handleField("whatsapp", e.target.value)}
-            className="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50 outline-none focus:border-ecu-blue transition-colors"
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label className="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">
-            Correo *
-          </label>
-          <input
-            required type="email" placeholder="Ej: juan@correo.com"
-            value={fields.correo}
-            onChange={(e) => handleField("correo", e.target.value)}
-            className="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50 outline-none focus:border-ecu-blue transition-colors"
+            className="flex-1 bg-transparent py-2 pl-1 placeholder:text-outline/50 outline-none"
           />
         </div>
       </div>
 
-      {/* Row 3: Tallas + stock */}
+      {/* Row 3: Correo */}
+      <div className="flex flex-col gap-1">
+        <label className="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">
+          Correo *
+        </label>
+        <input
+          required type="email" placeholder="Ej: juan@correo.com"
+          value={fields.correo}
+          onChange={(e) => handleField("correo", e.target.value)}
+          className="w-full bg-transparent border-b border-primary p-2 placeholder:text-outline/50 outline-none focus:border-ecu-blue transition-colors"
+        />
+      </div>
+
+      {/* Row 4: Tallas */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <label className="font-label-bold text-label-bold uppercase text-[10px] text-ecu-blue">
@@ -292,9 +418,7 @@ export default function OrderForm({
                   </span>
                   {soldOut ? (
                     <div className="w-full border-b border-primary/30 p-1 text-center">
-                      <span className="text-[10px] text-outline/50 uppercase tracking-widest">
-                        Ag.
-                      </span>
+                      <span className="text-[10px] text-outline/50 uppercase tracking-widest">Ag.</span>
                     </div>
                   ) : (
                     <input
@@ -335,14 +459,10 @@ export default function OrderForm({
         >
           <option value="Ecuador">Ecuador</option>
           <optgroup label="América Latina">
-            {LATAM_COUNTRIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
+            {LATAM_COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </optgroup>
           <optgroup label="Otros países">
-            {OTHER_COUNTRIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
+            {OTHER_COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </optgroup>
         </select>
       </div>
@@ -362,9 +482,7 @@ export default function OrderForm({
                 className="w-full bg-transparent border-b border-primary p-2 outline-none focus:border-ecu-blue transition-colors appearance-none cursor-pointer"
               >
                 <option value="" disabled>Selecciona una provincia</option>
-                {ECUADOR_PROVINCES.map((p) => (
-                  <option key={p} value={p}>{p}</option>
-                ))}
+                {ECUADOR_PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
             <div className="flex flex-col gap-1">
@@ -405,7 +523,7 @@ export default function OrderForm({
         </div>
       )}
 
-      {/* Live price breakdown */}
+      {/* Price breakdown */}
       {totalUnits > 0 && (
         <div className="border border-primary/10 p-unit-md space-y-2 bg-surface-container-low">
           <div className="flex justify-between font-body-md text-body-md">
@@ -430,8 +548,8 @@ export default function OrderForm({
         <div className="bg-ecu-blue/5 p-unit-md flex items-start gap-unit-md border-l-4 border-ecu-blue">
           <span className="material-symbols-outlined text-ecu-blue mt-1">info</span>
           <p className="font-body-md text-body-md text-secondary text-sm">
-            Tu pedido se procesa únicamente después de confirmar el pago. Recibirás
-            confirmación por WhatsApp.
+            Pagarás de forma segura con tarjeta de crédito o débito. Tu
+            pedido se procesa tras confirmar el pago.
           </p>
         </div>
       )}

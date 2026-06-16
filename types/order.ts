@@ -32,7 +32,7 @@ export interface Order {
   payment_status: PaymentStatus;
   fulfillment_status: FulfillmentStatus;
   is_international: boolean;
-  payphone_transaction_id: string | null;
+  payment_reference: string | null;
   client_transaction_id: string | null;
   notes: string | null;
 }
