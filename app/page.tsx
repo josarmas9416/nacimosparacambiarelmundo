@@ -60,7 +60,7 @@ export default async function Home() {
               className="object-cover object-center"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
           </div>
 
           <div className="relative z-10 w-full px-margin-mobile md:px-margin-desktop py-unit-xl max-w-container-max mx-auto text-white">
@@ -92,9 +92,6 @@ export default async function Home() {
                 </Link>
               </div>
 
-              <p className="font-label-sm text-label-sm text-white/60 uppercase tracking-widest">
-                ✓ Incluido envío dentro del Ecuador
-              </p>
             </div>
           </div>
         </section>
@@ -249,7 +246,7 @@ export default async function Home() {
             <OrderForm tshirtPrice={settings.tshirt_price} stock={settings.stock} />
           ) : (
             <div className="flex items-start gap-unit-md bg-ecu-yellow/10 border border-ecu-yellow px-unit-md py-unit-md">
-              <span className="material-symbols-outlined text-ecu-yellow text-2xl flex-shrink-0 mt-0.5">schedule</span>
+              <span className="material-symbols-outlined text-ecu-yellow text-2xl shrink-0 mt-0.5">schedule</span>
               <p className="font-body-md text-body-md text-on-surface font-semibold">
                 {settings.store_notice || "Los pedidos están temporalmente pausados. Vuelve pronto."}
               </p>

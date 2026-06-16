@@ -38,6 +38,12 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdn.payphonetodoesposible.com/box/v2.0/payphone-payment-box.css"
         />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-YPLY50EH7S" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-YPLY50EH7S');`,
+          }}
+        />
       </head>
       <body className="bg-surface text-on-surface font-body-md selection:bg-ecu-blue selection:text-white">
         {children}
