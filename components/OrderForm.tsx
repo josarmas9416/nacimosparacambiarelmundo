@@ -373,7 +373,7 @@ export default function OrderForm({
             />
           )}
           <input
-            required type="tel" placeholder="992665224"
+            required type="tel" placeholder="987654321"
             value={fields.whatsapp}
             onChange={(e) => handleField("whatsapp", e.target.value)}
             className="flex-1 bg-transparent py-2 pl-1 placeholder:text-outline/50 outline-none"
